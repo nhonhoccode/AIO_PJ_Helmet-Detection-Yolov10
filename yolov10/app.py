@@ -7,7 +7,8 @@ from ultralytics import YOLOv10
 def yolov10_inference(image, video, model_id, image_size, conf_threshold):
     model = YOLOv10.from_pretrained(f'jameslahm/{model_id}')
     if image:
-        results = model.predict(source=image, imgsz=image_size, conf=conf_threshold)
+        results = model.predict(
+            source=image, imgsz=image_size, conf=conf_threshold)
         annotated_image = results[0].plot()
         return annotated_image[:, :, ::-1], None
     else:
@@ -22,14 +23,16 @@ def yolov10_inference(image, video, model_id, image_size, conf_threshold):
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         output_video_path = tempfile.mktemp(suffix=".webm")
-        out = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc(*'vp80'), fps, (frame_width, frame_height))
+        out = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc(
+            *'vp80'), fps, (frame_width, frame_height))
 
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
 
-            results = model.predict(source=frame, imgsz=image_size, conf=conf_threshold)
+            results = model.predict(
+                source=frame, imgsz=image_size, conf=conf_threshold)
             annotated_frame = results[0].plot()
             out.write(annotated_frame)
 
@@ -40,7 +43,8 @@ def yolov10_inference(image, video, model_id, image_size, conf_threshold):
 
 
 def yolov10_inference_for_examples(image, model_path, image_size, conf_threshold):
-    annotated_image, _ = yolov10_inference(image, None, model_path, image_size, conf_threshold)
+    annotated_image, _ = yolov10_inference(
+        image, None, model_path, image_size, conf_threshold)
     return annotated_image
 
 
@@ -84,14 +88,19 @@ def app():
                 yolov10_infer = gr.Button(value="Detect Objects")
 
             with gr.Column():
-                output_image = gr.Image(type="numpy", label="Annotated Image", visible=True)
+                output_image = gr.Image(
+                    type="numpy", label="Annotated Image", visible=True)
                 output_video = gr.Video(label="Annotated Video", visible=False)
 
         def update_visibility(input_type):
-            image = gr.update(visible=True) if input_type == "Image" else gr.update(visible=False)
-            video = gr.update(visible=False) if input_type == "Image" else gr.update(visible=True)
-            output_image = gr.update(visible=True) if input_type == "Image" else gr.update(visible=False)
-            output_video = gr.update(visible=False) if input_type == "Image" else gr.update(visible=True)
+            image = gr.update(
+                visible=True) if input_type == "Image" else gr.update(visible=False)
+            video = gr.update(
+                visible=False) if input_type == "Image" else gr.update(visible=True)
+            output_image = gr.update(
+                visible=True) if input_type == "Image" else gr.update(visible=False)
+            output_video = gr.update(
+                visible=False) if input_type == "Image" else gr.update(visible=True)
 
             return image, video, output_image, output_video
 
@@ -107,10 +116,10 @@ def app():
             else:
                 return yolov10_inference(None, video, model_id, image_size, conf_threshold)
 
-
         yolov10_infer.click(
             fn=run_inference,
-            inputs=[image, video, model_id, image_size, conf_threshold, input_type],
+            inputs=[image, video, model_id, image_size,
+                    conf_threshold, input_type],
             outputs=[output_image, output_video],
         )
 
@@ -139,6 +148,7 @@ def app():
             outputs=[output_image],
             cache_examples='lazy',
         )
+
 
 gradio_app = gr.Blocks()
 with gradio_app:
