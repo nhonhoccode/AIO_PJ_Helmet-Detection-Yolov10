@@ -22,7 +22,10 @@ def yolov10_inference(image, video, model_id, image_size, conf_threshold):
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-        output_video_path = tempfile.mktemp(suffix=".webm")
+        # output_video_path = tempfile.mktemp(suffix=".webm")
+        with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as temp_file:
+            output_video_path = temp_file.name
+
         out = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc(
             *'vp80'), fps, (frame_width, frame_height))
 
